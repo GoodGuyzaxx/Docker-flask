@@ -8,13 +8,13 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /hab
+WORKDIR /zax
 COPY ./app .
 
 
-RUN python3 -m venv /hab/venv
-RUN /hab/venv/bin/pip install --upgrade pip
-RUN /hab/venv/bin/pip install --ignore-installed -r requirements.txt
+RUN python3 -m venv /zax/venv
+RUN /zax/venv/bin/pip install --upgrade pip
+RUN /zax/venv/bin/pip install --ignore-installed -r requirements.txt
 
 
-CMD ["/hab/venv/bin/gunicorn", "--bind", "0.0.0.0:8888", "app:app"]
+CMD ["/zax/venv/bin/gunicorn", "--bind", "0.0.0.0:8888", "app:app"]
