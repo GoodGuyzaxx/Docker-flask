@@ -1,18 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
-    <link rel="stylesheet" href="index.css">
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <title>Prediksi Kualitas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 5px;
+            width: 200px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 8px 12px;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<title>Flask Droplet</title>
 
 <body>
-    <div class="Flask">
-        <img src="logo.png" class="Sammy" alt="logo" />
-        <p>
-            Flask Server
-        </p>
-    </div>
+
+    <h1>Hello</h1>
+
+    <form id="prediksiForm">
+        <label>Suhu Udara:
+            <input type="number" id="suhu_udara" required>
+        </label>
+        <label>Kelembaban Udara:
+            <input type="number" id="kelembaban_udara" required>
+        </label>
+        <label>Kelembaban Tanah:
+            <input type="number" id="kelembaban_tanah" required>
+        </label>
+        <label>Intensitas Cahaya:
+            <input type="number" id="intensitas_cahaya" required>
+        </label>
+        <button type="submit">Kirim Data</button>
+    </form>
+
+    <div class="result" id="hasil"></div>
+
+    <script>
+        document.getElementById('prediksiForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Ambil nilai input
+            const suhu_udara = parseFloat(document.getElementById('suhu_udara').value);
+            const kelembaban_udara = parseFloat(document.getElementById('kelembaban_udara').value);
+            const kelembaban_tanah = parseFloat(document.getElementById('kelembaban_tanah').value);
+            const intensitas_cahaya = parseFloat(document.getElementById('intensitas_cahaya').value);
+
+            // Buat JSON body
+            const data = {
+                suhu_udara: suhu_udara,
+                kelembaban_udara: kelembaban_udara,
+                kelembaban_tanah: kelembaban_tanah,
+                intensitas_cahaya: intensitas_cahaya
+            };
+
+            // Kirim POST request ke server Flask
+            fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    // Tampilkan hasil prediksi dan probabilitas
+                    document.getElementById('hasil').innerHTML = `
+          <p>Hasil Prediksi: <strong>${result.prediction}</strong></p>
+          <p>Probabilitas:</p>
+          <ul>
+            <li>Baik: ${result.probabilities.baik}</li>
+            <li>Buruk: ${result.probabilities.buruk}</li>
+          </ul>
+        `;
+                })
+                .catch(error => {
+                    document.getElementById('hasil').innerText = 'Terjadi error: ' + error;
+                });
+        });
+    </script>
+
 </body>
-<html>
+
+</html>
